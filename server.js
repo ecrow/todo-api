@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const { mongoose } = require('./db/mongoose');
+const { ObjectID } = require('mongodb');
 const { Todo } = require('./models/todo');
 
 const port = process.env.PORT || 3000;
@@ -37,6 +38,24 @@ app.get('/todos/:id',(req, res)=>{
     },(err)=>{
         res.status(404).send(err);
     })
+});
+
+app.delete('/todos/:id',(req,res)=>{
+    const id = req.params.id;
+    if (!ObjectID.isValid(id)){
+        return res.status(404).send({message:'Not a valid id'});
+    }
+    Todo.findByIdAndRemove(id).then((todo)=>{
+        if(!todo){
+            return res.status(404).send({ message: 'Item not found' });
+        }
+        res.status(200).send(todo);
+    },(err)=>{
+        return res.status(500).send(err);
+    })
+    .catch((e)=>{
+        res.status(500).send();
+    });
 });
 
 app.listen(port, ()=>{
