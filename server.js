@@ -120,6 +120,14 @@ app.post('/users/login', (req,res)=>{
     });
 });
 
+app.delete('/users/me/token', authenticate, (req, res)=>{
+    req.user.removeToken(req.token).then(()=>{
+        res.status(200).send({message:"Logout succeded"});
+    }).catch(()=>{
+        res.status(500).send();
+    });
+});
+
 app.listen(port, ()=>{
     console.log(`API started on port ${port}`);
 });
