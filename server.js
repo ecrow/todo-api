@@ -11,7 +11,7 @@ const { User } = require('./models/user');
 const { authenticate } = require('./middleware/authenticate');
 
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -114,8 +114,7 @@ app.post('/users', (req, res) => {
 
     user.save().then(() => {
         return user.generateAuthToken();
-    })
-        .then((token) => {
+        }).then((token) => {
             res.header('x-auth', token).send(user)
         })
         .catch((err) => {
